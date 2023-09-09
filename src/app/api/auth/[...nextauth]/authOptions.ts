@@ -13,35 +13,36 @@ export const authOptions: NextAuthOptions = {
   },
   providers: [
     GoogleProvider({
-      clientId: "",
-      clientSecret: "",
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
   ],
   callbacks: {
+    //return object will be treated as token that contain every data needed to be injected in jwt
+
     async jwt({ token, user }) {
       const dbUser = (await db.get(`user:${token.id}`)) as User | null;
+
+      //if user is not in db then we have to give an id from user.id(user is created to store in db)
       if (!dbUser) {
-        token.id = user!.id;
-        return token;
+        return {
+          ...token,
+          id: user.id,
+        };
       }
+      //if user exits in db then it will have every thing in db, so we can send all info from db user as token
       return {
-        id: dbUser?.id,
-        name: dbUser?.name,
-        email: dbUser?.email,
-        image: dbUser?.image,
+        ...dbUser,
       };
     },
 
+    //and here you create and return the session
     async session({ session, token }) {
       if (token) {
-        (session.user.id = token.id),
-          (session.user.name = token.name),
-          (session.user.email = token.email),
-          (session.user.image = token.picture);
+        session.user = { ...token };
       }
       return session;
     },
-
     redirect() {
       return "/dashboard";
     },
