@@ -8,6 +8,8 @@ export async function fetchRedis(
   ...args: (string | number)[]
 ) {
   const commandURL = `${upStashRedisRestUrl}/${command}/${args.join("/")}`;
+
+  console.log(commandURL);
   const res = await fetch(`${commandURL}`, {
     headers: {
       Authorization: `Bearer ${upStashAuthToken}`,

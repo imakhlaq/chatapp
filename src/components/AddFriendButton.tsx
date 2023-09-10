@@ -27,9 +27,11 @@ export default function AddFriendButton({}: Props) {
     try {
       const validatedEmail = addFriendValidator.parse({ email });
 
-      await axios.post("/api/friends/add", {
+      const res = await axios.post("/api/friends/add", {
         email: validatedEmail,
       });
+
+      console.log(res.data);
       setShowSuccessState(true);
     } catch (e) {
       if (e instanceof z.ZodError) {
@@ -37,7 +39,7 @@ export default function AddFriendButton({}: Props) {
         return;
       }
       if (e instanceof AxiosError) {
-        setError("email", { message: e.response?.data });
+        setError("email", { message: e.response?.data.message });
         return;
       }
       setError("email", { message: "Something went wrong" });

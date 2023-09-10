@@ -17,12 +17,10 @@ export async function POST(req: Request) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
 
     //fetching data using function because next cache the data in routes
-    const RESTResponse = await fetchRedis("get", `user:email${emailToAdd}`);
-
-    const data = (await RESTResponse.json()) as { result: string | null };
-
-    //id of person u want to add
-    const idToAdd = data.result;
+    const idToAdd = (await fetchRedis(
+      "get",
+      `user:email:${emailToAdd}`,
+    )) as string;
 
     if (!idToAdd)
       return NextResponse.json(
@@ -56,7 +54,7 @@ export async function POST(req: Request) {
     if (isAlreadyFriend)
       return NextResponse.json({ message: "Already a friend" });
 
-    //valid now send friend request
+    //valid now send friend request only get request is cached by Next.js
     db.sadd(`user:${idToAdd}:incoming_friend_requests`, session.user.id);
 
     return NextResponse.json(
