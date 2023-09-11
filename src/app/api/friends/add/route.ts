@@ -42,7 +42,10 @@ export async function POST(req: Request) {
     )) as 0 | 1;
 
     if (isAlreadyAdded)
-      return NextResponse.json({ message: "Already friend request is sent" });
+      return NextResponse.json(
+        { message: "Already friend request is sent" },
+        { status: 400 },
+      );
 
     //check if it already a friends
     const isAlreadyFriend = (await fetchRedis(
@@ -52,7 +55,10 @@ export async function POST(req: Request) {
     )) as 0 | 1;
 
     if (isAlreadyFriend)
-      return NextResponse.json({ message: "Already a friend" });
+      return NextResponse.json(
+        { message: "Already a friend" },
+        { status: 400 },
+      );
 
     //valid now send friend request only get request is cached by Next.js
     db.sadd(`user:${idToAdd}:incoming_friend_requests`, session.user.id);

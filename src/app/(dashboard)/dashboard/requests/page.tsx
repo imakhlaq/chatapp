@@ -17,7 +17,11 @@ export default async function Page({}: Props) {
   )) as string[];
   const incomingFriendRequests = await Promise.all(
     incomingSenderIds.map(async (senderId) => {
-      const sender = (await fetchRedis("get", `user:${senderId}`)) as User;
+      const senderJSON = (await fetchRedis(
+        "get",
+        `user:${senderId}`,
+      )) as string;
+      const sender = JSON.parse(senderJSON) as User;
       return {
         senderId,
         senderEmail: sender.email,
