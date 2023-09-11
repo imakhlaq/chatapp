@@ -3,6 +3,9 @@ import { UpstashRedisAdapter } from "@next-auth/upstash-redis-adapter";
 import { db } from "@/lib/db";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
+import { fetchRedis } from "@/helper/redis";
+
+// Next.js caches the get request, so make a helper function to do http request else you will get weird behavior
 
 export const authOptions: NextAuthOptions = {
   adapter: UpstashRedisAdapter(db),
@@ -41,15 +44,19 @@ export const authOptions: NextAuthOptions = {
     //return object will be treated as a token that contains every data needed to be injected in jwt
 
     async jwt({ token, user }) {
-      const dbUser = (await db.get(`user:${token.id}`)) as User | null;
+      const dbResult = (await fetchRedis("get", `user:${token.id}`)) as
+        | string
+        | null;
 
       //if a user is not in db, then we have to give an id from user.id(user is created to store in db)
-      if (!dbUser) {
+      if (!dbResult) {
         return {
           ...token,
           id: user.id,
         };
       }
+
+      const dbUser = JSON.parse(dbResult) as User;
       //if user exits in db then it will have everything in db, so we can send all info from db user as token
       return {
         ...dbUser,
