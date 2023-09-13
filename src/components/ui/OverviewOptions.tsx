@@ -1,21 +1,17 @@
-import { Icon, Icons } from "@/components/Icons";
+import { Icons } from "@/components/Icons";
 import SignOutButton from "@/components/SignOutButton";
 import { getServerSession } from "next-auth";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ReactNode } from "react";
 import FriendRequestSidebarOptions from "@/components/FriendRequestSidebarOptions";
-/*import { getFriendsByUserId } from "@/helpers/get-friends-by-user-id";
-import SidebarChatList from "@/components/SidebarChatList";
-import MobileChatLayout from "@/components/MobileChatLayout";*/
 import { SidebarOption } from "@/types/typings";
 import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
 import { fetchRedis } from "@/helper/redis";
+import { getFriendsByUserId } from "@/helper/getFriendById";
+import SidebarChatList from "@/components/SidebarChatList";
 
-interface LayoutProps {
-  children: ReactNode;
-}
+interface LayoutProps {}
 
 // Done after the video and optional: add page metadata
 export const metadata = {
@@ -32,7 +28,7 @@ const sidebarOptions: SidebarOption[] = [
   },
 ];
 
-const OverviewOptions = async ({ children }: LayoutProps) => {
+const OverviewOptions = async ({}: LayoutProps) => {
   const session = await getServerSession(authOptions);
   if (!session) notFound();
 
@@ -42,7 +38,8 @@ const OverviewOptions = async ({ children }: LayoutProps) => {
       `user:${session.user.id}:incoming_friend_requests`,
     )) as User[]
   ).length;
-  //const friends = await getFriendsByUserId(session.user.id);
+
+  const friends = await getFriendsByUserId(session.user.id);
 
   return (
     <div className="w-full flex h-screen">
@@ -60,16 +57,16 @@ const OverviewOptions = async ({ children }: LayoutProps) => {
           <Icons.Logo className="h-8 w-auto text-indigo-600" />
         </Link>
 
-        {/*     {friends.length > 0 ? (
+        {friends.length > 0 ? (
           <div className="text-xs font-semibold leading-6 text-gray-400">
             Your chats
           </div>
-        ) : null}*/}
+        ) : null}
 
         <nav className="flex flex-1 flex-col">
           <ul role="list" className="flex flex-1 flex-col gap-y-7">
             <li>
-              {/*  <SidebarChatList sessionId={session.user.id} friends={friends} />*/}
+              <SidebarChatList sessionId={session.user.id} friends={friends} />
             </li>
             <li>
               <div className="text-xs font-semibold leading-6 text-gray-400">
@@ -94,7 +91,6 @@ const OverviewOptions = async ({ children }: LayoutProps) => {
                     </li>
                   );
                 })}
-
                 <li>
                   <FriendRequestSidebarOptions
                     sessionId={session.user.id}
@@ -130,10 +126,6 @@ const OverviewOptions = async ({ children }: LayoutProps) => {
           </ul>
         </nav>
       </div>
-
-      <aside className="max-h-screen container py-16 md:py-12 w-full">
-        {children}
-      </aside>
     </div>
   );
 };

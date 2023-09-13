@@ -1,3 +1,4 @@
+"use client";
 import { ButtonHTMLAttributes, useState } from "react";
 import Button from "@/components/ui/Button";
 import { Loader2, LogOut } from "lucide-react";

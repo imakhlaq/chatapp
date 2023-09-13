@@ -1,3 +1,4 @@
+"use client";
 import { useState } from "react";
 import { Check, UserPlus, X } from "lucide-react";
 import axios from "axios";

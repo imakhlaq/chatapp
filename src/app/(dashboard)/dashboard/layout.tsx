@@ -3,6 +3,7 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { Icons } from "@/components/Icons";
+import OverviewOptions from "@/components/ui/OverviewOptions";
 
 export default async function Layout({
   children,
@@ -22,9 +23,11 @@ export default async function Layout({
         <div className="text-xs font-semibold leading-6 text-gray-400 mt-14">
           Your chats
         </div>
-        <nav className="flex flex-1 flex-col"></nav>
+        <OverviewOptions />
       </div>
-      {children}
+      <aside className="max-h-screen container py-16 md:py-12 w-full">
+        {children}
+      </aside>
     </div>
   );
 }
