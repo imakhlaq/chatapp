@@ -41,6 +41,8 @@ const OverviewOptions = async ({}: LayoutProps) => {
 
   const friends = await getFriendsByUserId(session.user.id);
 
+  console.log({ friends });
+
   return (
     <div className="w-full flex h-screen">
       {/* <div className="md:hidden">

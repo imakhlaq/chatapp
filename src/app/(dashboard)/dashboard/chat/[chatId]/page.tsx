@@ -44,7 +44,7 @@ export default async function Page({ params: { chatId } }: Props) {
   if (user.id !== userId1 && user.id !== userId2) return notFound();
 
   //finding who is the chat Partner
-  const chatPartnerId = session.user.id === userId1 ? userId1 : userId2;
+  const chatPartnerId = session.user.id === userId1 ? userId2 : userId1;
 
   const chatPartnerDetails = await fetchRedis("get", `user:${chatPartnerId}`);
 
