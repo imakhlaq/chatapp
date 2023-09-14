@@ -59,6 +59,8 @@ export async function POST(req: Request) {
       score: timestamp,
       member: JSON.stringify(messageData),
     });
+
+    return NextResponse.json({ message: text }, { status: 201 });
   } catch (e) {
     if (e instanceof ZodError)
       return NextResponse.json(
