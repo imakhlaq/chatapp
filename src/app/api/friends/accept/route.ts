@@ -13,7 +13,7 @@ export async function POST(req: Request) {
     const session = await getServerSession(authOptions);
     if (!session)
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-    console.log("16");
+
     //check whether thy are already friends
     const isAlreadyFriends = await fetchRedis(
       "sismember",
@@ -31,8 +31,6 @@ export async function POST(req: Request) {
       idToAdd,
     );
 
-    console.log("33");
-
     if (!hasFriendRequest)
       return NextResponse.json(
         { message: "No friend Request" },
@@ -41,11 +39,11 @@ export async function POST(req: Request) {
     //now both are friend
     await db.sadd(`user:${session.user.id}:friends`, idToAdd);
     await db.sadd(`user:${idToAdd}:friends`, session.user.id);
-    console.log("43");
+
     // await db.srem(`user:${idToAdd}:incoming_friend_requests`,session.user.id)
 
     await db.srem(`user:${session.user.id}:incoming_friend_requests`, idToAdd);
-    console.log("47");
+
     return NextResponse.json({ message: "OK" }, { status: 200 });
   } catch (e) {
     if (e instanceof ZodError)
