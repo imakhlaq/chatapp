@@ -6,7 +6,7 @@ import { Message } from "@/lib/validations/messge";
 import { format } from "date-fns";
 
 type Props = {
-  initialMessages: Message[];
+  initialMessages: Message[] | undefined;
   chatId: string;
   chatPartner: User;
   sessionImg: string | null | undefined;
@@ -26,7 +26,9 @@ export default function Messages({
 }: Props) {
   const scrollDownRef = useRef<HTMLDivElement | null>(null);
 
-  const [messages, setMessages] = useState<Message[]>(initialMessages);
+  const [messages, setMessages] = useState<Message[] | undefined>(
+    initialMessages,
+  );
   console.log(messages);
 
   return (
@@ -36,7 +38,7 @@ export default function Messages({
     >
       <div ref={scrollDownRef} />
 
-      {messages.map((message, index) => {
+      {messages?.map((message, index) => {
         const isCurrentUser = message.senderId === sessionId;
 
         const hasNextMessageFromSameUser =

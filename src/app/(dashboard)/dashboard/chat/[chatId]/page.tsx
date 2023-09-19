@@ -18,8 +18,9 @@ async function getChatMessages(chatId: string) {
     const result: string[] = await fetchRedis(
       "zrange",
       `chat:${chatId}:messages`,
+      0,
+      -1,
     );
-    console.log({ result });
 
     const dbMessage = result.map((message) => JSON.parse(message) as Message);
 
@@ -27,8 +28,10 @@ async function getChatMessages(chatId: string) {
 
     return messageArrayValidator.parse(reverseMessage);
   } catch (e) {
-    console.log(e);
-    notFound();
+    console.log("Error");
+
+    // @ts-ignore
+    console.log(e.message);
   }
 }
 
@@ -36,7 +39,6 @@ export default async function Page({ params: { chatId } }: Props) {
   const session = await getServerSession(authOptions);
   console.log({ session });
 
-  console.log("hereeeeeeeeee");
   if (!session) notFound();
 
   const { user } = session;
@@ -47,6 +49,7 @@ export default async function Page({ params: { chatId } }: Props) {
 
   //finding who is the chat Partner
   const chatPartnerId = session.user.id === userId1 ? userId2 : userId1;
+  console.log(chatPartnerId);
 
   const chatPartnerDetails = await fetchRedis("get", `user:${chatPartnerId}`);
 
