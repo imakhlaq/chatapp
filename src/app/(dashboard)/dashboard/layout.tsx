@@ -1,8 +1,6 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
 import { notFound } from "next/navigation";
-import Link from "next/link";
-import { Icons } from "@/components/Icons";
 import OverviewOptions from "@/components/ui/OverviewOptions";
 
 export default async function Layout({
@@ -11,6 +9,8 @@ export default async function Layout({
   children: React.ReactNode;
 }) {
   const session = await getServerSession(authOptions);
+
+  console.log({ session });
 
   if (!session) notFound();
 

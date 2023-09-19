@@ -18,9 +18,8 @@ async function getChatMessages(chatId: string) {
     const result: string[] = await fetchRedis(
       "zrange",
       `chat:${chatId}:messages`,
-      0,
-      -1,
     );
+    console.log({ result });
 
     const dbMessage = result.map((message) => JSON.parse(message) as Message);
 
@@ -35,7 +34,10 @@ async function getChatMessages(chatId: string) {
 
 export default async function Page({ params: { chatId } }: Props) {
   const session = await getServerSession(authOptions);
-  if (!session) return notFound();
+  console.log({ session });
+
+  console.log("hereeeeeeeeee");
+  if (!session) notFound();
 
   const { user } = session;
 
@@ -51,6 +53,7 @@ export default async function Page({ params: { chatId } }: Props) {
   const chatPartnerParsed = JSON.parse(chatPartnerDetails) as User;
 
   const initialMessages = await getChatMessages(chatId);
+  console.log(initialMessages);
 
   return (
     <div className="flex-1 justify-between flex flex-col h-full max-h-[calc(100vh-6rem)]">

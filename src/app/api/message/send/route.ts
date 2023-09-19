@@ -6,10 +6,12 @@ import { db } from "@/lib/db";
 import { nanoid } from "nanoid";
 import { Message } from "@/lib/validations/messge";
 import { ZodError } from "zod";
+import { linkGc } from "next/dist/client/app-link-gc";
 
 export async function POST(req: Request) {
   try {
     const { text, chatId }: { text: string; chatId: string } = await req.json();
+    console.log({ text, chatId });
 
     const session = await getServerSession(authOptions);
     if (!session)
@@ -25,7 +27,7 @@ export async function POST(req: Request) {
     //checking if they are friends
     const friendList = (await fetchRedis(
       "smembers",
-      `user:${session.user.id}`,
+      `user:${session.user.id}:friends`,
     )) as string[];
 
     const isFriend = friendList.includes(friendId);
@@ -59,9 +61,10 @@ export async function POST(req: Request) {
       score: timestamp,
       member: JSON.stringify(messageData),
     });
-
     return NextResponse.json({ message: text }, { status: 201 });
   } catch (e) {
+    // @ts-ignore
+    console.log(e.message);
     if (e instanceof ZodError)
       return NextResponse.json(
         { message: "Message is not in correct format" },

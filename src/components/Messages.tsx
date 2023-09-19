@@ -27,6 +27,7 @@ export default function Messages({
   const scrollDownRef = useRef<HTMLDivElement | null>(null);
 
   const [messages, setMessages] = useState<Message[]>(initialMessages);
+  console.log(messages);
 
   return (
     <div
