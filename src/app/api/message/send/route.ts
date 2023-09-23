@@ -18,12 +18,12 @@ export async function POST(req: Request) {
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
 
     const [userId1, userId2] = chatId.split("--");
-    console.log(`here ${21}`);
+
     if (session.user.id !== userId1 && session.user.id !== userId2)
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
 
     const friendId = session.user.id === userId1 ? userId2 : userId1;
-    console.log(`here ${26}`);
+
     //checking if they are friends
     const friendList = (await fetchRedis(
       "smembers",
@@ -31,13 +31,13 @@ export async function POST(req: Request) {
     )) as string[];
 
     const isFriend = friendList.includes(friendId);
-    console.log(`here ${34}`);
+
     if (!isFriend)
       return NextResponse.json(
         { message: "You too are not friends" },
         { status: 401 },
       );
-    console.log(`here ${40}`);
+
     //get sender data
     const rawSender: string = await fetchRedis(
       "get",
@@ -47,7 +47,7 @@ export async function POST(req: Request) {
     const sender: User = JSON.parse(rawSender);
 
     //send the message
-    console.log(`here ${50}`);
+
     const timestamp = Date.now();
 
     const messageData: Message = {
@@ -57,14 +57,11 @@ export async function POST(req: Request) {
       timestamp,
     };
 
-    console.log(`here ${60}`);
-
     await db.zadd(`chat:${chatId}:messages`, {
       score: timestamp,
       member: JSON.stringify(messageData),
     });
 
-    console.log(`here ${67}`);
     return NextResponse.json({ message: text }, { status: 201 });
   } catch (e) {
     // @ts-ignore
