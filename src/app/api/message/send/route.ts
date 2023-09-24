@@ -46,6 +46,8 @@ export async function POST(req: Request) {
 
     const sender: User = JSON.parse(rawSender);
 
+    // implement socketi.o
+
     //send the message
 
     const timestamp = Date.now();
